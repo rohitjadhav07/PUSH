@@ -1,0 +1,29 @@
+{
+  "telegram:5181518099": {
+    "userId": "telegram:5181518099",
+    "createdAt": "2025-10-08T17:53:27.026Z",
+    "phoneNumber": "+919209213804",
+    "username": "JshreeDeshmukh",
+    "address": "0x33F4753d3ba3A1a811e8996BBbab1dD76dD909De",
+    "source": "manual_mapping",
+    "updatedAt": "2025-10-08T17:53:27.027Z"
+  },
+  "telegram:1779167095": {
+    "userId": "telegram:1779167095",
+    "createdAt": "2025-10-08T17:52:22.615Z",
+    "phoneNumber": "+917798519719",
+    "username": null,
+    "address": "0xA402d0b03EbFD5C69C1F5cFF1e1C7AFEaE1F6961",
+    "source": "manual_mapping",
+    "updatedAt": "2025-10-08T17:53:27.096Z"
+  },
+  "telegram:1899803470": {
+    "userId": "telegram:1899803470",
+    "createdAt": "2025-10-08T17:52:22.680Z",
+    "phoneNumber": "+919529745400",
+    "username": "ro_hitt_07",
+    "address": "0x59930b314519fA1fe5529aa188C391F1ccd84640",
+    "source": "manual_mapping",
+    "updatedAt": "2025-10-08T17:53:27.118Z"
+  }
+}

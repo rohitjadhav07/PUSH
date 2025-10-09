@@ -1,0 +1,58 @@
+{
+  "1234567890": {
+    "phoneNumber": "1234567890",
+    "address": "0x5600931D00b904252Fec8Bec342c8a282eF5E893",
+    "privateKey": "0xe9d38bd508f0225bb7f3be88452eede8ae1571a9184a2bc03fc93829c476cf61",
+    "createdAt": "2025-10-07T16:05:56.347Z",
+    "transactions": [],
+    "faucetResult": {
+      "success": true,
+      "txHash": "0x53d19fe7d9faa",
+      "amount": "10.0",
+      "message": "✅ Received 10.0 PC tokens! (Demo mode)",
+      "demo": true
+    }
+  },
+  "1779167095": {
+    "phoneNumber": "1779167095",
+    "address": "0xA402d0b03EbFD5C69C1F5cFF1e1C7AFEaE1F6961",
+    "privateKey": "0x6d78a01ad65106020701c533a265573ea4c53360a599507abe754a2d5e67dc5e",
+    "createdAt": "2025-10-08T06:43:45.234Z",
+    "transactions": [],
+    "faucetResult": {
+      "success": true,
+      "txHash": "0x6ee50973333da",
+      "amount": "10.0",
+      "message": "✅ Received 10.0 PC tokens! (Demo mode)",
+      "demo": true
+    }
+  },
+  "1899803470": {
+    "phoneNumber": "1899803470",
+    "address": "0x59930b314519fA1fe5529aa188C391F1ccd84640",
+    "privateKey": "0xaf8842f26778d8910006b269b77ee4de20f73549ccb0e9116079113c32e834e0",
+    "createdAt": "2025-10-08T06:53:06.058Z",
+    "transactions": []
+  },
+  "+917798519719": {
+    "phoneNumber": "+917798519719",
+    "address": "0x10eA4c63ceAe64Dd367e3Cb689654aF939865b48",
+    "privateKey": "0x172cda6c4c7c9e5ed98ff6a92964e6ff9c2886dadd619583cfb2909b73506ae2",
+    "createdAt": "2025-10-07T16:19:34.007Z",
+    "transactions": []
+  },
+  "+919529745400": {
+    "phoneNumber": "+919529745400",
+    "address": "0xB75a4c19b38ADa432cCe2D0AC8c262f6286117D2",
+    "privateKey": "0x4f4d371fd4960d9051e50aa98e8cf96b16f60b036d75c57b42a2a1aa70c1ffcc",
+    "createdAt": "2025-10-07T17:00:09.917Z",
+    "transactions": []
+  },
+  "5181518099": {
+    "phoneNumber": "5181518099",
+    "address": "0x33F4753d3ba3A1a811e8996BBbab1dD76dD909De",
+    "privateKey": "0x93fb478e58e5c7498446ec3e1f1c72c731a43b2d8bde07f0c66f8ed954e9f345",
+    "createdAt": "2025-10-08T08:19:56.506Z",
+    "transactions": []
+  }
+}
