@@ -1,48 +1,63 @@
 {
-  "name": "pushpay",
+  "name": "chainsync-universal-commerce",
   "version": "1.0.0",
-  "description": "Universal crypto payments via WhatsApp powered by Push Chain",
-  "main": "src/index.js",
+  "description": "Universal Social Commerce Platform - Project G.U.D Winner",
+  "main": "setup-chainsync.js",
   "scripts": {
-    "start": "node start.js",
-    "dev": "nodemon start.js",
-    "test": "jest",
-    "compile": "hardhat compile",
-    "deploy": "hardhat run scripts/deploy.js --network pushchain",
-    "deploy:local": "hardhat run scripts/deploy.js --network hardhat",
-    "verify": "hardhat verify --network pushchain",
-    "setup": "node scripts/setup.js"
-  },
-  "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0",
-    "axios": "^1.6.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "ethers": "^6.8.0",
-    "express": "^4.18.2",
-    "helmet": "^7.1.0",
-    "node-telegram-bot-api": "^0.66.0",
-    "qrcode": "^1.5.4",
-    "rate-limiter-flexible": "^8.0.1",
-    "razorpay": "^2.9.2",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
-    "stripe": "^14.5.0",
-    "twilio": "^4.19.0"
-  },
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
-    "hardhat": "^2.19.0",
-    "jest": "^29.7.0",
-    "nodemon": "^3.0.1"
+    "setup": "node setup-chainsync.js",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd chainsync && npm run dev",
+    "dev:client": "cd chainsync/client && npm run dev",
+    "build": "npm run build:contracts && npm run build:client",
+    "build:contracts": "npx hardhat compile",
+    "build:client": "cd chainsync/client && npm run build",
+    "deploy": "npx hardhat run scripts/deploy-chainsync.js --network pushchain",
+    "deploy:local": "npx hardhat run scripts/deploy-chainsync.js --network localhost",
+    "test": "npx hardhat test",
+    "test:contracts": "npx hardhat test test/*.js",
+    "start": "npm run start:server",
+    "start:server": "cd chainsync && npm start",
+    "start:client": "cd chainsync/client && npm start",
+    "install:all": "npm install && cd chainsync && npm install && cd client && npm install",
+    "clean": "rm -rf node_modules chainsync/node_modules chainsync/client/node_modules",
+    "lint": "cd chainsync/client && npm run lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "check": "npm run build:contracts && npm run lint"
   },
   "keywords": [
+    "blockchain",
+    "universal-commerce",
+    "cross-chain",
+    "social-commerce",
     "push-chain",
-    "whatsapp",
-    "crypto",
-    "universal-app",
-    "payments"
+    "web3",
+    "marketplace",
+    "telegram-bot",
+    "project-gud"
   ],
-  "author": "Your Name",
-  "license": "MIT"
+  "author": "ChainSync Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "hardhat": "^2.19.0",
+    "concurrently": "^8.2.2",
+    "prettier": "^3.0.0"
+  },
+  "dependencies": {
+    "ethers": "^6.7.1",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rohitjadhav07/PUSH.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rohitjadhav07/PUSH/issues"
+  },
+  "homepage": "https://github.com/rohitjadhav07/PUSH#readme"
 }
