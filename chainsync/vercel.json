@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "name": "chainsync",
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "client/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "client/pages/api/**/*.js": {
+      "maxDuration": 30
+    }
+  }
+}
