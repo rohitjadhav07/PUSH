@@ -189,10 +189,10 @@ export default function TelegramAuth({ onAuthSuccess, onAuthError }) {
             </p>
             <div className="space-y-3">
               <button
-                onClick={() => window.open('https://t.me/PushPayCryptoBot/chainsync', '_blank')}
+                onClick={() => window.open('https://t.me/PushAuthBot/ChainSyncSocial', '_blank')}
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
               >
-                Open via PushPay Bot
+                Open via @PushAuthBot
               </button>
               <button
                 onClick={() => setAuthStep('initial')}
@@ -278,7 +278,7 @@ export default function TelegramAuth({ onAuthSuccess, onAuthError }) {
             </h3>
             
             <p className="text-gray-600 mb-6 max-w-sm mx-auto">
-              Link your Telegram account to access social features, find friends, and use PushPay Bot
+              Link your Telegram account to access social features, find friends, and use @PushAuthBot
             </p>
             
             <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
@@ -288,7 +288,7 @@ export default function TelegramAuth({ onAuthSuccess, onAuthError }) {
               </div>
               <div className="flex items-center space-x-2 text-gray-600">
                 <Bot className="w-4 h-4 text-blue-500" />
-                <span>PushPay Bot</span>
+                <span>@PushAuthBot</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-600">
                 <Zap className="w-4 h-4 text-yellow-500" />
@@ -342,7 +342,7 @@ export default function TelegramAuth({ onAuthSuccess, onAuthError }) {
             </div>
             <div className="flex items-center space-x-2">
               <Check className="w-4 h-4 text-green-500" />
-              <span>Use PushPay Bot for payments</span>
+              <span>Use @PushAuthBot for payments</span>
             </div>
             <div className="flex items-center space-x-2">
               <Check className="w-4 h-4 text-green-500" />
@@ -366,7 +366,7 @@ export default function TelegramAuth({ onAuthSuccess, onAuthError }) {
         >
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-semibold text-gray-900">
-              PushPay Bot Integration
+              @PushAuthBot Integration
             </h4>
             <div className="flex items-center space-x-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
               <Check className="w-3 h-3" />
@@ -375,11 +375,11 @@ export default function TelegramAuth({ onAuthSuccess, onAuthError }) {
           </div>
           
           <button
-            onClick={() => window.open('https://t.me/PushPayCryptoBot', '_blank')}
+            onClick={() => window.open(process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL || 'https://t.me/PushAuthBot', '_blank')}
             className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-2 px-4 rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
           >
             <Bot className="w-4 h-4" />
-            <span className="text-sm font-medium">Open PushPay Bot</span>
+            <span className="text-sm font-medium">Open @PushAuthBot</span>
           </button>
         </motion.div>
       )}

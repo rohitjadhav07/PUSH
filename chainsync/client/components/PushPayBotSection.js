@@ -4,7 +4,9 @@ import { MessageCircle, Zap, Users, ArrowRight, Bot, Smartphone } from 'lucide-r
 export default function PushPayBotSection() {
 
   const handleOpenBot = () => {
-    window.open('https://t.me/PushPayCryptoBot', '_blank');
+    // Use the configured bot URL from environment variables
+    const botUrl = process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL || 'https://t.me/PushAuthBot';
+    window.open(botUrl, '_blank');
   };
 
   return (
@@ -72,7 +74,7 @@ export default function PushPayBotSection() {
             </div>
 
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">PushPay Bot</span>
+              Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">@PushAuthBot</span>
             </h2>
 
             <p className="text-xl text-gray-300 mb-8">
@@ -116,7 +118,7 @@ export default function PushPayBotSection() {
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <MessageCircle className="w-5 h-5 mr-2" />
-              Try PushPay Bot
+              Try @PushAuthBot
               <ArrowRight className="w-5 h-5 ml-2" />
             </button>
           </motion.div>
@@ -137,7 +139,7 @@ export default function PushPayBotSection() {
                     <Bot className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="font-semibold">PushPay Bot</div>
+                    <div className="font-semibold">@PushAuthBot</div>
                     <div className="text-xs text-blue-200">Online • Push Chain</div>
                   </div>
                 </div>
@@ -260,7 +262,7 @@ export default function PushPayBotSection() {
           <div className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white">
             <Bot className="w-5 h-5 mr-2" />
             <span className="text-sm">
-              PushPay Bot seamlessly integrates with ChainSync for the ultimate commerce experience
+              @PushAuthBot seamlessly integrates with ChainSync for the ultimate commerce experience
             </span>
           </div>
         </motion.div>
