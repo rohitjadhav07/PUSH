@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 import { 
   Heart, 
   Share2, 
@@ -15,15 +16,23 @@ import {
   ShoppingBag,
   Award,
   Check,
-  TrendingUp as Fire
+  TrendingUp as Fire,
+  Search,
+  UserPlus,
+  Settings
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import TelegramUserSearch from '../components/TelegramUserSearch';
+import TelegramAuth from '../components/TelegramAuth';
 
 export default function Social() {
   const [activeTab, setActiveTab] = useState('trending');
   const [socialPosts, setSocialPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [telegramUser, setTelegramUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showUserSearch, setShowUserSearch] = useState(false);
 
   // Mock social data
   useEffect(() => {
@@ -116,24 +125,83 @@ export default function Social() {
     window.open(process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL, '_blank');
   };
 
-  const handleLike = (postId) => {
-    setSocialPosts(posts => 
-      posts.map(post => 
-        post.id === postId 
-          ? { ...post, engagement: { ...post.engagement, likes: post.engagement.likes + 1 } }
-          : post
-      )
-    );
+  // Handle Telegram authentication
+  const handleTelegramAuth = (user) => {
+    setTelegramUser(user);
+    toast.success(`Welcome ${user.firstName}! You can now search for friends.`);
   };
 
-  const handleShare = (postId) => {
-    setSocialPosts(posts => 
-      posts.map(post => 
-        post.id === postId 
-          ? { ...post, engagement: { ...post.engagement, shares: post.engagement.shares + 1 } }
-          : post
-      )
-    );
+  // Handle user selection from search
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    toast.success(`Viewing ${user.firstName}'s profile`);
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      // Optimistic update
+      setSocialPosts(posts => 
+        posts.map(post => 
+          post.id === postId 
+            ? { ...post, engagement: { ...post.engagement, likes: post.engagement.likes + 1 } }
+            : post
+        )
+      );
+      
+      // Here you would call the API
+      // await chainSyncAPI.likePost(userTelegramId, postId);
+      
+      // Show success feedback
+      const post = socialPosts.find(p => p.id === postId);
+      if (post) {
+        toast.success(`Liked ${post.user.name}'s post!`);
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+      toast.error('Failed to like post');
+      
+      // Revert optimistic update
+      setSocialPosts(posts => 
+        posts.map(post => 
+          post.id === postId 
+            ? { ...post, engagement: { ...post.engagement, likes: post.engagement.likes - 1 } }
+            : post
+        )
+      );
+    }
+  };
+
+  const handleShare = async (postId) => {
+    try {
+      const post = socialPosts.find(p => p.id === postId);
+      if (!post) return;
+      
+      const shareText = `Check out this amazing product: "${post.product.name}" on ChainSync! 🚀`;
+      
+      if (navigator.share) {
+        await navigator.share({
+          title: 'ChainSync Social Commerce',
+          text: shareText,
+          url: window.location.href
+        });
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        toast.success('Post copied to clipboard!');
+      }
+      
+      // Update share count
+      setSocialPosts(posts => 
+        posts.map(p => 
+          p.id === postId 
+            ? { ...p, engagement: { ...p.engagement, shares: p.engagement.shares + 1 } }
+            : p
+        )
+      );
+      
+    } catch (error) {
+      console.error('Error sharing post:', error);
+      toast.error('Failed to share post');
+    }
   };
 
   const getChainIcon = (chain) => {
@@ -277,6 +345,86 @@ export default function Social() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Sidebar */}
               <div className="lg:col-span-1 space-y-6">
+                {/* Telegram Authentication */}
+                <TelegramAuth 
+                  onAuthSuccess={handleTelegramAuth}
+                  onAuthError={(error) => toast.error('Failed to connect to Telegram')}
+                />
+
+                {/* User Search - Only show if authenticated */}
+                {telegramUser && (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">Find Friends</h3>
+                      <button
+                        onClick={() => setShowUserSearch(!showUserSearch)}
+                        className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                      >
+                        <Search className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    <TelegramUserSearch 
+                      onUserSelect={handleUserSelect}
+                      className="mb-4"
+                    />
+                    
+                    {selectedUser && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-100"
+                      >
+                        <div className="flex items-center space-x-3 mb-3">
+                          <img
+                            src={selectedUser.avatar}
+                            alt={selectedUser.firstName}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                          <div>
+                            <div className="font-semibold text-gray-900">
+                              {selectedUser.firstName} {selectedUser.lastName}
+                            </div>
+                            <div className="text-sm text-gray-600">{selectedUser.telegramId}</div>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          <div className="bg-white/50 rounded-lg p-2 text-center">
+                            <div className="font-semibold text-green-600">
+                              {selectedUser.chainSyncProfile.totalPurchases}
+                            </div>
+                            <div className="text-gray-600">Purchases</div>
+                          </div>
+                          <div className="bg-white/50 rounded-lg p-2 text-center">
+                            <div className="font-semibold text-blue-600">
+                              {selectedUser.chainSyncProfile.totalSales}
+                            </div>
+                            <div className="text-gray-600">Sales</div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex space-x-2 mt-3">
+                          <button
+                            onClick={() => window.open(`https://t.me/${selectedUser.username}`, '_blank')}
+                            className="flex-1 bg-blue-500 text-white text-sm py-2 px-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-1"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            <span>Message</span>
+                          </button>
+                          <button
+                            onClick={() => toast.success(`Added ${selectedUser.firstName} as friend!`)}
+                            className="flex-1 bg-purple-500 text-white text-sm py-2 px-3 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center space-x-1"
+                          >
+                            <UserPlus className="w-4 h-4" />
+                            <span>Add</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+
                 {/* Navigation Tabs */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold mb-4">Explore</h3>

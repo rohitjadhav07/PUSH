@@ -17,10 +17,15 @@ import {
   ArrowUp,
   ArrowDown,
   Calendar,
-  Filter
+  Filter,
+  RefreshCw
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ChainDistributionPieChart from '../components/charts/PieChart';
+import CategoryPerformanceBarChart from '../components/charts/BarChart';
+import RevenueLineChart from '../components/charts/LineChart';
+import UserEngagementDonutChart from '../components/charts/DonutChart';
 
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('7d');
@@ -42,17 +47,32 @@ export default function Analytics() {
         avgOrderChange: -2.1
       },
       chainDistribution: [
-        { chain: 'Push Chain', value: 35, color: '#8B5CF6', transactions: 1197 },
-        { chain: 'Ethereum', value: 28, color: '#3B82F6', transactions: 958 },
-        { chain: 'Solana', value: 20, color: '#10B981', transactions: 684 },
-        { chain: 'Polygon', value: 12, color: '#F59E0B', transactions: 410 },
-        { chain: 'Others', value: 5, color: '#6B7280', transactions: 171 }
+        { name: 'Push Chain', value: 35, color: '#8B5CF6', transactions: 1197 },
+        { name: 'Ethereum', value: 28, color: '#3B82F6', transactions: 958 },
+        { name: 'Solana', value: 20, color: '#10B981', transactions: 684 },
+        { name: 'Polygon', value: 12, color: '#F59E0B', transactions: 410 },
+        { name: 'Others', value: 5, color: '#6B7280', transactions: 171 }
       ],
       categoryPerformance: [
         { category: 'Digital Art', revenue: 45000, growth: 18.5, orders: 890 },
         { category: 'Education', revenue: 32000, growth: 25.2, orders: 1200 },
         { category: 'Gaming', revenue: 28000, growth: 12.8, orders: 650 },
         { category: 'DeFi', revenue: 20000, growth: 8.9, orders: 680 }
+      ],
+      revenueTimeSeries: [
+        { date: 'Jan 15', revenue: 15000, transactions: 120 },
+        { date: 'Jan 16', revenue: 18000, transactions: 145 },
+        { date: 'Jan 17', revenue: 22000, transactions: 180 },
+        { date: 'Jan 18', revenue: 19000, transactions: 155 },
+        { date: 'Jan 19', revenue: 25000, transactions: 200 },
+        { date: 'Jan 20', revenue: 28000, transactions: 220 },
+        { date: 'Jan 21', revenue: 32000, transactions: 250 }
+      ],
+      userEngagement: [
+        { name: 'Active Buyers', value: 45 },
+        { name: 'Active Sellers', value: 25 },
+        { name: 'Social Users', value: 20 },
+        { name: 'Bot Users', value: 10 }
       ],
       recentActivity: [
         { type: 'sale', amount: 2.5, currency: 'PC', user: 'CryptoArtist', time: '2 min ago' },
@@ -331,57 +351,80 @@ export default function Analytics() {
 
                 {/* Charts Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                  {/* Chain Distribution */}
+                  {/* Chain Distribution Pie Chart */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
-                    className="bg-white rounded-2xl p-6 shadow-sm"
+                    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300"
                   >
-                    <h3 className="text-xl font-semibold mb-6">Chain Distribution</h3>
-                    <div className="space-y-4">
-                      {analyticsData.chainDistribution.map((chain, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div 
-                              className="w-4 h-4 rounded-full"
-                              style={{ backgroundColor: chain.color }}
-                            ></div>
-                            <span className="font-medium">{chain.chain}</span>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-semibold">{chain.value}%</div>
-                            <div className="text-sm text-gray-500">{chain.transactions} txns</div>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-semibold">Chain Distribution</h3>
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <PieChart className="w-4 h-4" />
+                        <span>Transaction Volume</span>
+                      </div>
                     </div>
+                    <ChainDistributionPieChart data={analyticsData.chainDistribution} />
                   </motion.div>
 
-                  {/* Category Performance */}
+                  {/* Category Performance Bar Chart */}
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.5 }}
-                    className="bg-white rounded-2xl p-6 shadow-sm"
+                    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300"
                   >
-                    <h3 className="text-xl font-semibold mb-6">Category Performance</h3>
-                    <div className="space-y-4">
-                      {analyticsData.categoryPerformance.map((category, index) => (
-                        <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium">{category.category}</span>
-                            <span className="text-green-600 text-sm font-medium">
-                              +{category.growth}%
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm text-gray-600">
-                            <span>{formatCurrency(category.revenue)}</span>
-                            <span>{category.orders} orders</span>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-semibold">Category Performance</h3>
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <BarChart3 className="w-4 h-4" />
+                        <span>Revenue by Category</span>
+                      </div>
                     </div>
+                    <CategoryPerformanceBarChart data={analyticsData.categoryPerformance} />
+                  </motion.div>
+                </div>
+
+                {/* Revenue Trends and User Engagement */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                  {/* Revenue Trends Line Chart */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.6 }}
+                    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-semibold">Revenue Trends</h3>
+                      <div className="flex items-center space-x-2">
+                        <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                          <RefreshCw className="w-4 h-4" />
+                        </button>
+                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                          <Activity className="w-4 h-4" />
+                          <span>Last 7 Days</span>
+                        </div>
+                      </div>
+                    </div>
+                    <RevenueLineChart data={analyticsData.revenueTimeSeries} />
+                  </motion.div>
+
+                  {/* User Engagement Donut Chart */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.7 }}
+                    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-semibold">User Engagement</h3>
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <Users className="w-4 h-4" />
+                        <span>Active Users</span>
+                      </div>
+                    </div>
+                    <UserEngagementDonutChart data={analyticsData.userEngagement} />
                   </motion.div>
                 </div>
 

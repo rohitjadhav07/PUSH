@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>ChainSync - Universal Social Commerce | Project G.U.D</title>
+        <title>ChainSync - Universal Social Commerce</title>
         <meta name="description" content="Shop anywhere, pay from any chain, sell everywhere. The first Universal Social Commerce platform built on Push Chain." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -148,7 +148,7 @@ export default function Home() {
                   >
                     <Sparkles className="w-4 h-4 mr-2 text-yellow-400" />
                   </motion.div>
-                  Project G.U.D Winner - Universal Commerce Revolution
+                  Universal Commerce Revolution
                 </motion.div>
                 
                 <motion.h1 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 import { 
   Upload, 
   DollarSign, 
@@ -9,7 +10,9 @@ import {
   Bot,
   TrendingUp,
   Users,
-  ShoppingBag
+  ShoppingBag,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -24,10 +27,60 @@ export default function Sell() {
     chains: ['push']
   });
 
-  const handleSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Product submission:', formData);
-    // Handle form submission
+    
+    // Validate form
+    if (!formData.title || !formData.description || !formData.price) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    if (parseFloat(formData.price) <= 0) {
+      toast.error('Price must be greater than 0');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      toast.loading('Listing your product...', { id: 'listing' });
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Here you would call the actual API
+      // const result = await chainSyncAPI.listProduct(telegramId, formData.title, formData.description, formData.price, formData.category);
+      
+      setSubmitted(true);
+      toast.success('Product listed successfully! 🎉', { id: 'listing' });
+      
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        price: '',
+        currency: 'PC',
+        category: 'art',
+        chains: ['push']
+      });
+      
+    } catch (error) {
+      console.error('Error listing product:', error);
+      toast.error('Failed to list product. Please try again.', { id: 'listing' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleBotClick = () => {
@@ -159,8 +212,8 @@ export default function Sell() {
                       <input
                         type="text"
                         value={formData.title}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-push-500 focus:border-transparent"
+                        onChange={(e) => handleInputChange('title', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                         placeholder="Enter your product title"
                         required
                       />
@@ -173,9 +226,9 @@ export default function Sell() {
                       </label>
                       <textarea
                         value={formData.description}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
                         rows={4}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-push-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                         placeholder="Describe your product..."
                         required
                       />
@@ -190,9 +243,10 @@ export default function Sell() {
                         <input
                           type="number"
                           step="0.01"
+                          min="0"
                           value={formData.price}
-                          onChange={(e) => setFormData({...formData, price: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-push-500 focus:border-transparent"
+                          onChange={(e) => handleInputChange('price', e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                           placeholder="0.00"
                           required
                         />
@@ -203,8 +257,8 @@ export default function Sell() {
                         </label>
                         <select
                           value={formData.currency}
-                          onChange={(e) => setFormData({...formData, currency: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-push-500 focus:border-transparent"
+                          onChange={(e) => handleInputChange('currency', e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                         >
                           <option value="PC">PC (Push Chain)</option>
                           <option value="ETH">ETH (Ethereum)</option>
@@ -221,8 +275,8 @@ export default function Sell() {
                       </label>
                       <select
                         value={formData.category}
-                        onChange={(e) => setFormData({...formData, category: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-push-500 focus:border-transparent"
+                        onChange={(e) => handleInputChange('category', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                       >
                         <option value="art">Digital Art</option>
                         <option value="education">Education</option>
@@ -233,12 +287,36 @@ export default function Sell() {
                     </div>
 
                     {/* Submit Button */}
-                    <button
+                    <motion.button
                       type="submit"
-                      className="w-full px-6 py-4 bg-gradient-to-r from-push-600 to-blue-600 text-white font-semibold rounded-xl hover:from-push-700 hover:to-blue-700 transition-all duration-200 shadow-lg"
+                      disabled={isSubmitting || submitted}
+                      whileHover={{ scale: submitted ? 1 : 1.02 }}
+                      whileTap={{ scale: submitted ? 1 : 0.98 }}
+                      className={`w-full px-6 py-4 font-semibold rounded-xl transition-all duration-200 shadow-lg flex items-center justify-center space-x-2 ${
+                        submitted 
+                          ? 'bg-green-600 text-white cursor-not-allowed' 
+                          : isSubmitting 
+                            ? 'bg-gray-400 text-white cursor-not-allowed' 
+                            : 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
+                      }`}
                     >
-                      List Product Universally
-                    </button>
+                      {submitted ? (
+                        <>
+                          <CheckCircle className="w-5 h-5" />
+                          <span>Product Listed Successfully!</span>
+                        </>
+                      ) : isSubmitting ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Listing Product...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag className="w-5 h-5" />
+                          <span>List Product Universally</span>
+                        </>
+                      )}
+                    </motion.button>
                   </form>
                 </motion.div>
               </div>

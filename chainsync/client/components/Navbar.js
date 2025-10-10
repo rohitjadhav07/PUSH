@@ -9,12 +9,30 @@ import {
   Wallet,
   Bot,
   TrendingUp,
-  MessageCircle
+  MessageCircle,
+  LogOut,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
+import { useWeb3 } from '../contexts/Web3Context';
+import chainSyncAPI from '../lib/chainsync-api';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+  const [balance, setBalance] = useState('0');
+
+  const { 
+    account, 
+    isConnected, 
+    isLoading, 
+    connectWallet, 
+    disconnect, 
+    isOnPushChain,
+    switchToPushChain,
+    getBalance
+  } = useWeb3();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,8 +42,63 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isConnected && account) {
+      updateBalance();
+    }
+  }, [isConnected, account]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showWalletDropdown && !event.target.closest('.wallet-dropdown-container')) {
+        setShowWalletDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showWalletDropdown]);
+
+  const updateBalance = async () => {
+    if (account) {
+      try {
+        const bal = await getBalance(account);
+        setBalance(bal);
+      } catch (error) {
+        console.error('Error getting balance:', error);
+      }
+    }
+  };
+
   const handleBotClick = () => {
-    window.open(process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL, '_blank');
+    window.open(process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL || 'https://t.me/PushPayCryptoBot', '_blank');
+  };
+
+  const handleWalletConnect = async () => {
+    if (isConnected) {
+      setShowWalletDropdown(!showWalletDropdown);
+    } else {
+      await connectWallet();
+    }
+  };
+
+  const handleDisconnect = () => {
+    disconnect();
+    setShowWalletDropdown(false);
+  };
+
+  const formatAddress = (address) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const formatBalance = (balance) => {
+    const num = parseFloat(balance);
+    if (num === 0) return '0';
+    if (num < 0.001) return '< 0.001';
+    if (num < 1) return num.toFixed(4);
+    return num.toFixed(2);
   };
 
   return (
@@ -96,19 +169,103 @@ export default function Navbar() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center space-x-4">
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`inline-flex items-center px-4 py-2 font-medium transition-all duration-200 rounded-lg ${
-                scrolled 
-                  ? 'text-gray-700 hover:text-purple-600 hover:bg-purple-50' 
-                  : 'text-gray-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <Wallet className="w-4 h-4 mr-2" />
-              Connect Wallet
-            </motion.button>
+          <div className="hidden md:flex items-center space-x-4 relative">
+            {/* Wallet Button */}
+            <div className="relative wallet-dropdown-container">
+              <motion.button 
+                onClick={handleWalletConnect}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                disabled={isLoading}
+                className={`inline-flex items-center px-4 py-2 font-medium transition-all duration-200 rounded-lg ${
+                  isConnected
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                    : scrolled 
+                      ? 'text-gray-700 hover:text-purple-600 hover:bg-purple-50' 
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isConnected ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    <span className="hidden lg:inline">{formatAddress(account)}</span>
+                    <span className="lg:hidden">Connected</span>
+                  </>
+                ) : (
+                  <>
+                    <Wallet className="w-4 h-4 mr-2" />
+                    <span>{isLoading ? 'Connecting...' : 'Connect Wallet'}</span>
+                  </>
+                )}
+              </motion.button>
+
+              {/* Wallet Dropdown */}
+              <AnimatePresence>
+                {showWalletDropdown && isConnected && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50"
+                  >
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-900">Wallet</span>
+                        {isOnPushChain() ? (
+                          <span className="flex items-center text-xs text-green-600">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Push Chain
+                          </span>
+                        ) : (
+                          <span className="flex items-center text-xs text-red-600">
+                            <AlertCircle className="w-3 h-3 mr-1" />
+                            Wrong Network
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 font-mono mt-1">{formatAddress(account)}</div>
+                      <div className="text-sm font-semibold text-gray-900 mt-2">
+                        {formatBalance(balance)} PC
+                      </div>
+                    </div>
+                    
+                    {!isOnPushChain() && (
+                      <button
+                        onClick={switchToPushChain}
+                        className="w-full px-4 py-2 text-left text-sm text-orange-600 hover:bg-orange-50 transition-colors"
+                      >
+                        Switch to Push Chain
+                      </button>
+                    )}
+                    
+                    <button
+                      onClick={updateBalance}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      Refresh Balance
+                    </button>
+                    
+                    <Link
+                      href="/profile"
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      onClick={() => setShowWalletDropdown(false)}
+                    >
+                      View Profile
+                    </Link>
+                    
+                    <button
+                      onClick={handleDisconnect}
+                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Disconnect
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Profile Link */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link href="/profile" className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
                 <User className="w-4 h-4 mr-2" />
@@ -193,14 +350,39 @@ export default function Navbar() {
               </div>
 
               <div className="space-y-2">
-                <button className="flex items-center space-x-3 w-full text-gray-700 hover:text-push-600 transition-colors">
-                  <Wallet className="w-5 h-5" />
-                  <span>Connect Wallet</span>
+                <button 
+                  onClick={handleWalletConnect}
+                  disabled={isLoading}
+                  className={`flex items-center space-x-3 w-full px-4 py-2 rounded-lg transition-colors ${
+                    isConnected
+                      ? 'bg-green-100 text-green-700'
+                      : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50'
+                  } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {isConnected ? <CheckCircle className="w-5 h-5" /> : <Wallet className="w-5 h-5" />}
+                  <span>
+                    {isConnected 
+                      ? `Connected: ${formatAddress(account)}` 
+                      : isLoading 
+                        ? 'Connecting...' 
+                        : 'Connect Wallet'
+                    }
+                  </span>
                 </button>
+                
+                {isConnected && (
+                  <button 
+                    onClick={handleDisconnect}
+                    className="flex items-center space-x-3 w-full px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span>Disconnect</span>
+                  </button>
+                )}
                 
                 <Link 
                   href="/profile" 
-                  className="flex items-center space-x-3 w-full px-4 py-2 bg-push-600 text-white rounded-lg hover:bg-push-700 transition-colors"
+                  className="flex items-center space-x-3 w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   <User className="w-5 h-5" />

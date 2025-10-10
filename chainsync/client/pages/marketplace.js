@@ -159,13 +159,34 @@ export default function Marketplace() {
   ];
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = searchQuery === '' || 
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.seller?.name.toLowerCase().includes(searchQuery.toLowerCase());
+    
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    const matchesChain = selectedChain === 'all' || product.chains.includes(selectedChain);
+    const matchesChain = selectedChain === 'all' || (product.chains && product.chains.includes(selectedChain));
     
     return matchesSearch && matchesCategory && matchesChain;
   });
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleChainChange = (chain) => {
+    setSelectedChain(chain);
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+    setSelectedChain('all');
+  };
 
   const handleBotClick = () => {
     window.open(process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL, '_blank');
@@ -297,8 +318,8 @@ export default function Marketplace() {
                     type="text"
                     placeholder="Search products across all chains..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-push-500 focus:border-transparent"
+                    onChange={handleSearch}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                   />
                 </div>
               </div>
@@ -306,35 +327,39 @@ export default function Marketplace() {
               {/* Category Filter */}
               <div className="flex flex-wrap gap-2">
                 {categories.map((category) => (
-                  <button
+                  <motion.button
                     key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={() => handleCategoryChange(category.id)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       selectedCategory === category.id
-                        ? 'bg-push-600 text-white'
+                        ? 'bg-purple-600 text-white shadow-lg'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     {category.name} ({category.count})
-                  </button>
+                  </motion.button>
                 ))}
               </div>
 
               {/* Chain Filter */}
               <div className="flex flex-wrap gap-2">
                 {chains.map((chain) => (
-                  <button
+                  <motion.button
                     key={chain.id}
-                    onClick={() => setSelectedChain(chain.id)}
+                    onClick={() => handleChainChange(chain.id)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 ${
                       selectedChain === chain.id
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-blue-600 text-white shadow-lg'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
                     <span>{chain.icon}</span>
                     <span>{chain.name}</span>
-                  </button>
+                  </motion.button>
                 ))}
               </div>
 
@@ -382,16 +407,14 @@ export default function Marketplace() {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
                 <p className="text-gray-600 mb-6">Try adjusting your search or filters</p>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCategory('all');
-                    setSelectedChain('all');
-                  }}
-                  className="px-6 py-3 bg-push-600 text-white rounded-lg hover:bg-push-700 transition-colors"
+                <motion.button
+                  onClick={clearFilters}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 >
                   Clear Filters
-                </button>
+                </motion.button>
               </div>
             ) : (
               <motion.div

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 import { 
   Heart, 
   Share2, 
@@ -10,35 +11,109 @@ import {
   Zap,
   Globe,
   ExternalLink,
-  Bot
+  Bot,
+  Copy,
+  CheckCircle
 } from 'lucide-react';
+import { useWeb3 } from '../contexts/Web3Context';
+import chainSyncAPI from '../lib/chainsync-api';
 
 export default function ProductCard({ product, viewMode = 'grid' }) {
   const [liked, setLiked] = useState(false);
-  const [selectedChain, setSelectedChain] = useState(product.chains[0]);
+  const [selectedChain, setSelectedChain] = useState(product.chains?.[0] || 'push');
+  const [isLoading, setIsLoading] = useState(false);
+  const [purchased, setPurchased] = useState(false);
 
-  const handlePurchase = () => {
-    // This would integrate with the actual purchase flow
-    console.log('Purchase:', product.id, 'on chain:', selectedChain);
+  const { isConnected, account, connectWallet } = useWeb3();
+
+  const handleLike = async () => {
+    try {
+      setLiked(!liked);
+      
+      // Update local state optimistically
+      if (product.socialProof) {
+        product.socialProof.likes += liked ? -1 : 1;
+      }
+      
+      toast.success(liked ? 'Removed from favorites' : 'Added to favorites');
+      
+      // Here you would call the API to update likes
+      // await chainSyncAPI.likePost(userTelegramId, product.id);
+    } catch (error) {
+      console.error('Error liking product:', error);
+      setLiked(liked); // Revert on error
+      toast.error('Failed to update like status');
+    }
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: product.title,
-        text: product.description,
-        url: window.location.href + '/product/' + product.id,
-      });
-    } else {
-      // Fallback to copy to clipboard
-      navigator.clipboard.writeText(window.location.href + '/product/' + product.id);
+  const handlePurchase = async () => {
+    if (!isConnected) {
+      toast.error('Please connect your wallet first');
+      await connectWallet();
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Mock purchase process
+      toast.loading('Processing purchase...', { id: 'purchase' });
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setPurchased(true);
+      toast.success('Purchase successful! 🎉', { id: 'purchase' });
+      
+      // Here you would call the actual purchase API
+      // const result = await chainSyncAPI.purchaseProduct(userTelegramId, product.id);
+      
+    } catch (error) {
+      console.error('Purchase error:', error);
+      toast.error('Purchase failed. Please try again.', { id: 'purchase' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/product/${product.id}`;
+    const shareText = `Check out "${product.title}" on ChainSync! ${shareUrl}`;
+    
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: product.title,
+          text: product.description,
+          url: shareUrl,
+        });
+        toast.success('Shared successfully!');
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        toast.success('Link copied to clipboard!');
+      }
+      
+      // Update share count
+      if (product.socialProof) {
+        product.socialProof.shares += 1;
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      toast.error('Failed to share');
     }
   };
 
   const handleBotPayment = () => {
-    const botUrl = process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL;
-    const message = `I want to buy "${product.title}" for ${product.crossChainPricing[selectedChain].amount} ${product.crossChainPricing[selectedChain].symbol}`;
+    const botUrl = process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL || 'https://t.me/PushPayCryptoBot';
+    const currentPrice = product.crossChainPricing?.[selectedChain] || { amount: product.price, symbol: 'PC' };
+    const message = `I want to buy "${product.title}" for ${currentPrice.amount} ${currentPrice.symbol}`;
+    
     window.open(`${botUrl}?start=${encodeURIComponent(message)}`, '_blank');
+    toast.success('Opening PushPay Bot...');
+  };
+
+  const handleChainSelect = (chain) => {
+    setSelectedChain(chain);
+    toast.success(`Switched to ${chain.toUpperCase()}`);
   };
 
   const getChainIcon = (chain) => {
@@ -80,12 +155,14 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
               fill
               className="object-cover"
             />
-            <button
-              onClick={() => setLiked(!liked)}
+            <motion.button
+              onClick={handleLike}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
             >
               <Heart className={`w-4 h-4 ${liked ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
-            </button>
+            </motion.button>
           </div>
 
           {/* Content */}
@@ -124,42 +201,63 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
                 {/* Chain Selector */}
                 <div className="flex flex-wrap gap-1 mb-4 justify-end">
                   {product.chains.map((chain) => (
-                    <button
+                    <motion.button
                       key={chain}
-                      onClick={() => setSelectedChain(chain)}
+                      onClick={() => handleChainSelect(chain)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${
                         selectedChain === chain
-                          ? 'bg-push-600 text-white'
+                          ? 'bg-purple-600 text-white'
                           : getChainColor(chain)
                       }`}
                     >
                       {getChainIcon(chain)} {chain}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex space-x-2">
-                  <button
+                  <motion.button
                     onClick={handleBotPayment}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm flex items-center space-x-1"
                   >
                     <Bot className="w-4 h-4" />
                     <span>Bot Pay</span>
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
                     onClick={handlePurchase}
-                    className="px-4 py-2 bg-push-600 text-white rounded-lg hover:bg-push-700 transition-colors text-sm flex items-center space-x-1"
+                    disabled={isLoading || purchased}
+                    whileHover={{ scale: purchased ? 1 : 1.05 }}
+                    whileTap={{ scale: purchased ? 1 : 0.95 }}
+                    className={`px-4 py-2 rounded-lg transition-colors text-sm flex items-center space-x-1 ${
+                      purchased 
+                        ? 'bg-green-600 text-white cursor-not-allowed' 
+                        : isLoading 
+                          ? 'bg-gray-400 text-white cursor-not-allowed' 
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
                   >
-                    <ShoppingCart className="w-4 h-4" />
-                    <span>Buy Now</span>
-                  </button>
-                  <button
+                    {purchased ? (
+                      <CheckCircle className="w-4 h-4" />
+                    ) : (
+                      <ShoppingCart className="w-4 h-4" />
+                    )}
+                    <span>
+                      {purchased ? 'Purchased' : isLoading ? 'Buying...' : 'Buy Now'}
+                    </span>
+                  </motion.button>
+                  <motion.button
                     onClick={handleShare}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     <Share2 className="w-4 h-4" />
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </div>
@@ -202,18 +300,22 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
         {/* Overlay Actions */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300">
           <div className="absolute top-3 right-3 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={() => setLiked(!liked)}
+            <motion.button
+              onClick={handleLike}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
             >
               <Heart className={`w-4 h-4 ${liked ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={handleShare}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
             >
               <Share2 className="w-4 h-4 text-gray-600" />
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -264,17 +366,19 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
           <div className="text-xs text-gray-500 mb-2">Pay with:</div>
           <div className="flex flex-wrap gap-1">
             {product.chains.map((chain) => (
-              <button
+              <motion.button
                 key={chain}
-                onClick={() => setSelectedChain(chain)}
+                onClick={() => handleChainSelect(chain)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${
                   selectedChain === chain
-                    ? 'bg-push-600 text-white'
+                    ? 'bg-purple-600 text-white'
                     : getChainColor(chain)
                 }`}
               >
-                {getChainIcon(chain)} {product.crossChainPricing[chain]?.amount} {product.crossChainPricing[chain]?.symbol}
-              </button>
+                {getChainIcon(chain)} {product.crossChainPricing?.[chain]?.amount || product.price} {product.crossChainPricing?.[chain]?.symbol || 'PC'}
+              </motion.button>
             ))}
           </div>
         </div>
@@ -289,20 +393,37 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
 
         {/* Action Buttons */}
         <div className="flex space-x-2 mb-4">
-          <button
+          <motion.button
             onClick={handleBotPayment}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 text-sm font-medium flex items-center justify-center space-x-2"
           >
             <Bot className="w-4 h-4" />
             <span>Bot Pay</span>
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             onClick={handlePurchase}
-            className="flex-1 px-4 py-2 bg-push-600 text-white rounded-lg hover:bg-push-700 transition-colors text-sm font-medium flex items-center justify-center space-x-2"
+            disabled={isLoading || purchased}
+            whileHover={{ scale: purchased ? 1 : 1.05 }}
+            whileTap={{ scale: purchased ? 1 : 0.95 }}
+            className={`flex-1 px-4 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center space-x-2 ${
+              purchased 
+                ? 'bg-green-600 text-white cursor-not-allowed' 
+                : isLoading 
+                  ? 'bg-gray-400 text-white cursor-not-allowed' 
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
           >
-            <ShoppingCart className="w-4 h-4" />
-            <span>Buy Now</span>
-          </button>
+            {purchased ? (
+              <CheckCircle className="w-4 h-4" />
+            ) : (
+              <ShoppingCart className="w-4 h-4" />
+            )}
+            <span>
+              {purchased ? 'Purchased' : isLoading ? 'Buying...' : 'Buy Now'}
+            </span>
+          </motion.button>
         </div>
 
         {/* Social Proof */}
