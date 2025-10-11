@@ -104,7 +104,7 @@ Ready to get started? Tap the button below! 👇
       [
         {
           text: '🚀 Open ChainSync',
-          web_app: { url: `${process.env.FRONTEND_URL}/social` }
+          web_app: { url: `https://chainsync-social-commerce.vercel.app/social` }
         }
       ],
       [
@@ -137,7 +137,7 @@ Tap below to open the Web App! 👇
       [
         {
           text: '🚀 Open ChainSync Web App',
-          web_app: { url: `${process.env.FRONTEND_URL}/social` }
+          web_app: { url: `https://chainsync-social-commerce.vercel.app/social` }
         }
       ]
     ]
@@ -172,7 +172,7 @@ async function handleBalanceCommand(chatId, user) {
     inline_keyboard: [
       [
         { text: '💸 Send Money', callback_data: 'send' },
-        { text: '📈 View Details', web_app: { url: `${process.env.FRONTEND_URL}/profile` } }
+        { text: '📈 View Details', web_app: { url: `https://chainsync-social-commerce.vercel.app/profile` } }
       ]
     ]
   };
@@ -267,7 +267,7 @@ async function handleHistoryCommand(chatId, user) {
 💰 Received 5 SOL from @bob - <i>1 day ago</i>
 🛒 Purchased NFT for 0.1 ETH - <i>3 days ago</i>
 
-<a href="${process.env.FRONTEND_URL}/profile">View Full History →</a>
+<a href="https://chainsync-social-commerce.vercel.app/profile">View Full History →</a>
 `;
 
   return await sendTelegramMessage(chatId, message);
@@ -295,7 +295,7 @@ async function handleHelpCommand(chatId, user) {
 • All transactions are on-chain and secure
 • Works with multiple blockchains
 
-Need more help? Visit our <a href="${process.env.FRONTEND_URL}">Web App</a>!
+Need more help? Visit our <a href="https://chainsync-social-commerce.vercel.app">Web App</a>!
 `;
 
   return await sendTelegramMessage(chatId, message);
@@ -316,7 +316,7 @@ Or just tap a button below! 👇
   const keyboard = {
     inline_keyboard: [
       [
-        { text: '🚀 Open ChainSync', web_app: { url: `${process.env.FRONTEND_URL}/social` } }
+        { text: '🚀 Open ChainSync', web_app: { url: `https://chainsync-social-commerce.vercel.app/social` } }
       ],
       [
         { text: '💰 Balance', callback_data: 'balance' },
