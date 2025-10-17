@@ -352,19 +352,62 @@ async function handleCallbackQuery(callbackQuery) {
   } else if (data === 'help') {
     return await handleHelpCommand(chatId, user);
   } else if (data.startsWith('confirm_send_')) {
-    // Handle payment confirmation
+    // Handle payment confirmation - REAL TRANSACTION
     const [, , amount, currency, recipient] = data.split('_');
     
-    const message = `
+    try {
+      // Send processing message
+      await sendTelegramMessage(chatId, '⏳ Processing your payment...');
+      
+      // Call the send API
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://chainsync-social-commerce.vercel.app'}/api/wallet/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fromTelegramId: user.id,
+          recipient: recipient,
+          amount: amount,
+          message: `Payment via Telegram bot`
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const txHash = result.data.txHash;
+        const explorerUrl = `https://scan.push.org/tx/${txHash}`;
+        
+        const message = `
 ✅ <b>Payment Sent!</b>
 
 💸 ${amount} ${currency.toUpperCase()} sent to ${recipient}
-🔗 Transaction confirmed on blockchain
+🔗 <a href="${explorerUrl}">View on Block Explorer</a>
+
+<b>Transaction Hash:</b>
+<code>${txHash}</code>
 
 <i>🎉 Payment completed successfully!</i>
 `;
 
-    return await sendTelegramMessage(chatId, message);
+        return await sendTelegramMessage(chatId, message);
+      } else {
+        throw new Error(result.error || 'Transaction failed');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      
+      const errorMessage = `
+❌ <b>Payment Failed</b>
+
+${error.message || 'Unable to process payment'}
+
+Please try again or check your balance with /balance
+`;
+      
+      return await sendTelegramMessage(chatId, errorMessage);
+    }
   } else if (data === 'cancel') {
     return await sendTelegramMessage(chatId, '❌ Operation cancelled.');
   }
