@@ -24,7 +24,7 @@ import {
   Layers,
   Network
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavbarSimple';
 import Footer from '../components/Footer';
 import PushPayBotSection from '../components/PushPayBotSection';
 import FloatingElements from '../components/FloatingElements';

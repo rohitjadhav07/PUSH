@@ -17,8 +17,9 @@ import {
   Copy,
   ExternalLink
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavbarSimple';
 import Footer from '../components/Footer';
+import SendMoney from '../components/SendMoney';
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('overview');

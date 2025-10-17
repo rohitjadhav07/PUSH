@@ -15,7 +15,7 @@ import {
   TrendingUp,
   Bot
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/NavbarSimple';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 
