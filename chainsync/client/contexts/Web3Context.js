@@ -29,8 +29,8 @@ export const Web3Provider = ({ children }) => {
             symbol: 'PC',
             decimals: 18
         },
-        rpcUrls: [process.env.NEXT_PUBLIC_PUSH_CHAIN_RPC_URL || 'https://rpc.push.org'],
-        blockExplorerUrls: ['https://scan.push.org']
+        rpcUrls: [process.env.NEXT_PUBLIC_PUSH_CHAIN_RPC_URL || 'https://evm.rpc-testnet-donut-node1.push.org/'],
+        blockExplorerUrls: ['https://donut.push.network']
     };
 
     // Initialize provider

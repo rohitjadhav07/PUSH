@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     }
 
     const provider = new ethers.JsonRpcProvider(
-      process.env.PUSH_CHAIN_RPC_URL || 'https://rpc.push.org'
+      process.env.PUSH_CHAIN_RPC_URL || 'https://evm.rpc-testnet-donut-node1.push.org/'
     );
     
     const faucetWallet = new ethers.Wallet(faucetPrivateKey, provider);
