@@ -19,18 +19,20 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useWeb3 } from '../contexts/Web3Context';
 
 export default function Profile() {
+  const { account, isConnected } = useWeb3();
   const [activeTab, setActiveTab] = useState('overview');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Mock user data
+  // Mock user data - use actual wallet address if connected
   useEffect(() => {
     setTimeout(() => {
       setUser({
         id: 1,
-        address: '0x079b15a064c1cD07252CD9FCB1de5561D8D56992',
+        address: account || '0x079b15a064c1cD07252CD9FCB1de5561D8D56992',
         username: 'crypto_enthusiast',
         displayName: 'Crypto Enthusiast',
         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
@@ -71,7 +73,7 @@ export default function Profile() {
       });
       setLoading(false);
     }, 1000);
-  }, []);
+  }, [account]); // Reload when account changes
 
   const handleCopyAddress = () => {
     if (user?.address) {
