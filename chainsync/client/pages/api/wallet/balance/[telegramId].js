@@ -1,7 +1,17 @@
 // API route to get wallet balance
-const WalletService = require('../../../../../server/wallet-service');
+import { ethers } from 'ethers';
+import crypto from 'crypto';
 
-const walletService = new WalletService();
+function generateWallet(telegramId) {
+  const masterSeed = process.env.MASTER_WALLET_SEED || 'chainsync-universal-commerce-2025';
+  const seed = crypto
+    .createHash('sha256')
+    .update(`${masterSeed}-${telegramId}`)
+    .digest('hex');
+  
+  const wallet = new ethers.Wallet(seed);
+  return wallet.address;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -15,11 +25,23 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Telegram ID is required' });
     }
 
-    const balanceData = await walletService.getBalance(telegramId);
+    // Get wallet address
+    const address = generateWallet(telegramId);
+    
+    // Get balance from blockchain
+    const provider = new ethers.JsonRpcProvider(
+      process.env.PUSH_CHAIN_RPC_URL || 'https://rpc.push.org'
+    );
+    
+    const balance = await provider.getBalance(address);
 
     res.status(200).json({
       success: true,
-      data: balanceData
+      data: {
+        balance: ethers.formatEther(balance),
+        address: address,
+        balanceWei: balance.toString()
+      }
     });
 
   } catch (error) {

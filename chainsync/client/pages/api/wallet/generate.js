@@ -1,9 +1,21 @@
 // API route to generate wallet
-const WalletService = require('../../../../server/wallet-service');
-const UserLookupService = require('../../../../server/user-lookup-service');
+import { ethers } from 'ethers';
+import crypto from 'crypto';
 
-const walletService = new WalletService();
-const userLookup = new UserLookupService();
+// Inline wallet generation (no external dependencies)
+function generateWallet(telegramId) {
+  const masterSeed = process.env.MASTER_WALLET_SEED || 'chainsync-universal-commerce-2025';
+  const seed = crypto
+    .createHash('sha256')
+    .update(`${masterSeed}-${telegramId}`)
+    .digest('hex');
+  
+  const wallet = new ethers.Wallet(seed);
+  return {
+    address: wallet.address,
+    telegramId: telegramId
+  };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -18,16 +30,10 @@ export default async function handler(req, res) {
     }
 
     // Generate wallet
-    const walletData = walletService.generateWallet(telegramId);
+    const walletData = generateWallet(telegramId);
 
-    // Register user in database
-    await userLookup.registerUser({
-      telegramId,
-      username,
-      firstName,
-      lastName,
-      walletAddress: walletData.address
-    });
+    // TODO: Register user in database (implement when needed)
+    // For now, just return the wallet data
 
     res.status(200).json({
       success: true,

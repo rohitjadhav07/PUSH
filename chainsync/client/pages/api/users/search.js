@@ -1,7 +1,22 @@
 // API route to search users
-const UserLookupService = require('../../../../server/user-lookup-service');
+// Mock implementation - replace with database when ready
 
-const userLookup = new UserLookupService();
+const mockUsers = [
+  {
+    telegram_id: 123456789,
+    username: 'alice',
+    first_name: 'Alice',
+    last_name: 'Johnson',
+    wallet_address: '0x1234567890123456789012345678901234567890'
+  },
+  {
+    telegram_id: 987654321,
+    username: 'bob',
+    first_name: 'Bob',
+    last_name: 'Smith',
+    wallet_address: '0x0987654321098765432109876543210987654321'
+  }
+];
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -15,15 +30,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Query must be at least 2 characters' });
     }
 
-    const users = await userLookup.searchUsers(q, parseInt(limit) || 10);
+    // Search mock users
+    const searchLower = q.toLowerCase();
+    const users = mockUsers.filter(user => 
+      user.username?.toLowerCase().includes(searchLower) ||
+      user.first_name?.toLowerCase().includes(searchLower) ||
+      user.last_name?.toLowerCase().includes(searchLower)
+    ).slice(0, parseInt(limit) || 10);
 
-    // Format response (remove sensitive data)
+    // Format response
     const safeUsers = users.map(user => ({
       telegramId: user.telegram_id,
       username: user.username,
       firstName: user.first_name,
       lastName: user.last_name,
-      displayName: userLookup.getUserDisplayName(user),
+      displayName: `${user.first_name} ${user.last_name}`,
       walletAddress: user.wallet_address
     }));
 
