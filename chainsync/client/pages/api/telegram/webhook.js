@@ -126,13 +126,13 @@ async function handleFaucetCommand(chatId, user) {
 
     if (result.success && result.data) {
       const txHash = result.data.txHash;
-      const explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
+      const explorerUrl = `https://donut.push.network/tx/${txHash}`;
       
       return await sendTelegramMessage(chatId, `
 🎁 <b>Faucet Success!</b>
 
-💰 10 SepoliaETH added to your wallet!
-🔗 <a href="${explorerUrl}">View Transaction</a>
+💰 10 PC added to your wallet!
+🔗 <a href="${explorerUrl}">View on Push Chain Explorer</a>
 
 <b>Transaction Hash:</b>
 <code>${txHash}</code>
@@ -234,13 +234,14 @@ async function handleBalanceCommand(chatId, user) {
     const message = `
 💰 <b>Your Wallet Balance</b>
 
-🚀 Push Chain: ${balancePC} PC
+🚀 Push Chain Donut Testnet: ${balancePC} PC
 
 <b>Wallet Address:</b>
 <code>${walletAddress}</code>
 
 <i>💡 Tip: Use /send to transfer funds to friends!</i>
 <i>🎁 Need tokens? Use /faucet to get 10 PC</i>
+<i>🔗 Explorer: https://donut.push.network</i>
 `;
 
     const keyboard = {
@@ -453,13 +454,13 @@ async function handleCallbackQuery(callbackQuery) {
 
       if (result.success && result.data) {
         const txHash = result.data.txHash;
-        const explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
+        const explorerUrl = `https://donut.push.network/tx/${txHash}`;
         
         return await sendTelegramMessage(chatId, `
 🎁 <b>Faucet Success!</b>
 
-💰 10 SepoliaETH added to your wallet!
-🔗 <a href="${explorerUrl}">View Transaction</a>
+💰 10 PC added to your wallet!
+🔗 <a href="${explorerUrl}">View on Push Chain Explorer</a>
 
 Use /balance to check your new balance!
 `);
@@ -507,13 +508,13 @@ Use /balance to check your new balance!
 
       if (result.success && result.data) {
         const txHash = result.data.txHash;
-        const explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
+        const explorerUrl = `https://donut.push.network/tx/${txHash}`;
         
         const message = `
 ✅ <b>Payment Sent!</b>
 
-💸 ${amount} ETH sent to ${recipient}
-🔗 <a href="${explorerUrl}">View on Block Explorer</a>
+💸 ${amount} PC sent to ${recipient}
+🔗 <a href="${explorerUrl}">View on Push Chain Explorer</a>
 
 <b>Transaction Hash:</b>
 <code>${txHash}</code>
