@@ -126,12 +126,12 @@ async function handleFaucetCommand(chatId, user) {
 
     if (result.success && result.data) {
       const txHash = result.data.txHash;
-      const explorerUrl = `https://scan.push.org/tx/${txHash}`;
+      const explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
       
       return await sendTelegramMessage(chatId, `
 🎁 <b>Faucet Success!</b>
 
-💰 10 PC added to your wallet!
+💰 10 SepoliaETH added to your wallet!
 🔗 <a href="${explorerUrl}">View Transaction</a>
 
 <b>Transaction Hash:</b>
@@ -453,12 +453,12 @@ async function handleCallbackQuery(callbackQuery) {
 
       if (result.success && result.data) {
         const txHash = result.data.txHash;
-        const explorerUrl = `https://scan.push.org/tx/${txHash}`;
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
         
         return await sendTelegramMessage(chatId, `
 🎁 <b>Faucet Success!</b>
 
-💰 10 PC added to your wallet!
+💰 10 SepoliaETH added to your wallet!
 🔗 <a href="${explorerUrl}">View Transaction</a>
 
 Use /balance to check your new balance!
@@ -507,12 +507,12 @@ Use /balance to check your new balance!
 
       if (result.success && result.data) {
         const txHash = result.data.txHash;
-        const explorerUrl = `https://scan.push.org/tx/${txHash}`;
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
         
         const message = `
 ✅ <b>Payment Sent!</b>
 
-💸 ${amount} ${currency.toUpperCase()} sent to ${recipient}
+💸 ${amount} ETH sent to ${recipient}
 🔗 <a href="${explorerUrl}">View on Block Explorer</a>
 
 <b>Transaction Hash:</b>
