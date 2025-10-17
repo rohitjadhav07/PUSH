@@ -219,9 +219,29 @@ Tap below to open the Web App! 👇
 
 async function handleBalanceCommand(chatId, user) {
   try {
+    console.log('🔍 Fetching balance for user:', user.id);
+    
     // Fetch REAL balance from blockchain
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://chainsync-social-commerce.vercel.app'}/api/wallet/balance/${user.id}`);
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'https://chainsync-social-commerce.vercel.app'}/api/wallet/balance/${user.id}`;
+    console.log('📡 API URL:', apiUrl);
+    
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    console.log('📥 Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ API error response:', errorText);
+      throw new Error(`API returned ${response.status}: ${errorText}`);
+    }
+    
     const result = await response.json();
+    console.log('📦 API result:', JSON.stringify(result));
 
     let balancePC = '0';
     let walletAddress = '';
@@ -229,6 +249,10 @@ async function handleBalanceCommand(chatId, user) {
     if (result.success && result.data) {
       balancePC = parseFloat(result.data.balance).toFixed(4);
       walletAddress = result.data.address;
+      console.log('✅ Balance parsed:', balancePC, 'PC');
+    } else {
+      console.error('❌ Invalid result format:', result);
+      throw new Error(result.error || 'Invalid response format');
     }
 
     const message = `
@@ -260,8 +284,13 @@ async function handleBalanceCommand(chatId, user) {
       reply_markup: keyboard
     });
   } catch (error) {
-    console.error('Balance fetch error:', error);
-    return await sendTelegramMessage(chatId, '❌ Failed to fetch balance. Please try again.');
+    console.error('❌ Balance fetch error:', {
+      message: error.message,
+      stack: error.stack,
+      userId: user.id
+    });
+    
+    return await sendTelegramMessage(chatId, `❌ Failed to fetch balance: ${error.message}\n\nPlease try again or contact support.`);
   }
 }
 
