@@ -1,6 +1,31 @@
 // Telegram Bot Webhook Handler
 import crypto from 'crypto';
 
+// In-memory user database (username -> telegram ID mapping)
+// In production, this should be a real database
+const userDatabase = new Map();
+
+// Helper function to register user
+function registerUser(user) {
+  if (user.username) {
+    userDatabase.set(`@${user.username.toLowerCase()}`, user.id);
+  }
+  userDatabase.set(user.id.toString(), user.id);
+}
+
+// Helper function to lookup user by username
+function getUserTelegramId(identifier) {
+  // Remove @ if present and convert to lowercase
+  const cleanIdentifier = identifier.toLowerCase().replace('@', '');
+  
+  // Try with @
+  const withAt = userDatabase.get(`@${cleanIdentifier}`);
+  if (withAt) return withAt;
+  
+  // Try direct lookup
+  return userDatabase.get(cleanIdentifier);
+}
+
 // Validate webhook request from Telegram
 function validateTelegramWebhook(body, signature, botToken) {
   const secretKey = crypto.createHash('sha256').update(botToken).digest();
@@ -74,8 +99,52 @@ async function handleBotCommand(message) {
     case '/help':
       return await handleHelpCommand(chatId, user);
     
+    case '/faucet':
+      return await handleFaucetCommand(chatId, user);
+    
     default:
       return await handleUnknownCommand(chatId, text);
+  }
+}
+
+async function handleFaucetCommand(chatId, user) {
+  try {
+    await sendTelegramMessage(chatId, '⏳ Requesting tokens from faucet...');
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://chainsync-social-commerce.vercel.app'}/api/wallet/faucet`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        telegramId: user.id,
+        amount: '10'
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success && result.data) {
+      const txHash = result.data.txHash;
+      const explorerUrl = `https://scan.push.org/tx/${txHash}`;
+      
+      return await sendTelegramMessage(chatId, `
+🎁 <b>Faucet Success!</b>
+
+💰 10 PC added to your wallet!
+🔗 <a href="${explorerUrl}">View Transaction</a>
+
+<b>Transaction Hash:</b>
+<code>${txHash}</code>
+
+Use /balance to check your new balance!
+`);
+    } else {
+      throw new Error(result.error || 'Faucet request failed');
+    }
+  } catch (error) {
+    console.error('Faucet error:', error);
+    return await sendTelegramMessage(chatId, `❌ Faucet failed: ${error.message}\n\nPlease try again later.`);
   }
 }
 
@@ -149,37 +218,50 @@ Tap below to open the Web App! 👇
 }
 
 async function handleBalanceCommand(chatId, user) {
-  // In a real implementation, fetch actual balance from blockchain
-  const mockBalance = {
-    PC: '125.50',
-    ETH: '0.0234',
-    SOL: '12.8',
-    MATIC: '45.2'
-  };
+  try {
+    // Fetch REAL balance from blockchain
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://chainsync-social-commerce.vercel.app'}/api/wallet/balance/${user.id}`);
+    const result = await response.json();
 
-  const message = `
+    let balancePC = '0';
+    let walletAddress = '';
+
+    if (result.success && result.data) {
+      balancePC = parseFloat(result.data.balance).toFixed(4);
+      walletAddress = result.data.address;
+    }
+
+    const message = `
 💰 <b>Your Wallet Balance</b>
 
-🚀 Push Chain: ${mockBalance.PC} PC
-⟠ Ethereum: ${mockBalance.ETH} ETH  
-◎ Solana: ${mockBalance.SOL} SOL
-⬟ Polygon: ${mockBalance.MATIC} MATIC
+🚀 Push Chain: ${balancePC} PC
+
+<b>Wallet Address:</b>
+<code>${walletAddress}</code>
 
 <i>💡 Tip: Use /send to transfer funds to friends!</i>
+<i>🎁 Need tokens? Use /faucet to get 10 PC</i>
 `;
 
-  const keyboard = {
-    inline_keyboard: [
-      [
-        { text: '💸 Send Money', callback_data: 'send' },
-        { text: '📈 View Details', web_app: { url: `https://chainsync-social-commerce.vercel.app/profile` } }
+    const keyboard = {
+      inline_keyboard: [
+        [
+          { text: '💸 Send Money', callback_data: 'send' },
+          { text: '🎁 Get Faucet', callback_data: 'faucet' }
+        ],
+        [
+          { text: '📈 View Details', web_app: { url: `https://chainsync-social-commerce.vercel.app/profile` } }
+        ]
       ]
-    ]
-  };
+    };
 
-  return await sendTelegramMessage(chatId, message, {
-    reply_markup: keyboard
-  });
+    return await sendTelegramMessage(chatId, message, {
+      reply_markup: keyboard
+    });
+  } catch (error) {
+    console.error('Balance fetch error:', error);
+    return await sendTelegramMessage(chatId, '❌ Failed to fetch balance. Please try again.');
+  }
 }
 
 async function handleSendCommand(chatId, user, params) {
@@ -351,6 +433,43 @@ async function handleCallbackQuery(callbackQuery) {
     return await handleBalanceCommand(chatId, user);
   } else if (data === 'help') {
     return await handleHelpCommand(chatId, user);
+  } else if (data === 'faucet') {
+    // Handle faucet request
+    try {
+      await sendTelegramMessage(chatId, '⏳ Requesting tokens from faucet...');
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://chainsync-social-commerce.vercel.app'}/api/wallet/faucet`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          telegramId: user.id,
+          amount: '10'
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const txHash = result.data.txHash;
+        const explorerUrl = `https://scan.push.org/tx/${txHash}`;
+        
+        return await sendTelegramMessage(chatId, `
+🎁 <b>Faucet Success!</b>
+
+💰 10 PC added to your wallet!
+🔗 <a href="${explorerUrl}">View Transaction</a>
+
+Use /balance to check your new balance!
+`);
+      } else {
+        throw new Error(result.error || 'Faucet request failed');
+      }
+    } catch (error) {
+      console.error('Faucet error:', error);
+      return await sendTelegramMessage(chatId, `❌ Faucet failed: ${error.message}`);
+    }
   } else if (data.startsWith('confirm_send_')) {
     // Handle payment confirmation - REAL TRANSACTION
     const [, , amount, currency, recipient] = data.split('_');
@@ -359,6 +478,17 @@ async function handleCallbackQuery(callbackQuery) {
       // Send processing message
       await sendTelegramMessage(chatId, '⏳ Processing your payment...');
       
+      // Lookup recipient if it's a username
+      let recipientId = recipient;
+      if (recipient.startsWith('@')) {
+        const foundId = getUserTelegramId(recipient);
+        if (foundId) {
+          recipientId = foundId.toString();
+        } else {
+          throw new Error(`User ${recipient} not found. They need to start the bot first with /start`);
+        }
+      }
+
       // Call the send API
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://chainsync-social-commerce.vercel.app'}/api/wallet/send`, {
         method: 'POST',
@@ -367,7 +497,7 @@ async function handleCallbackQuery(callbackQuery) {
         },
         body: JSON.stringify({
           fromTelegramId: user.id,
-          recipient: recipient,
+          recipient: recipientId,
           amount: amount,
           message: `Payment via Telegram bot`
         })
@@ -430,8 +560,16 @@ export default async function handler(req, res) {
 
     // Handle different update types
     if (body.message) {
+      // Register user when they send a message
+      if (body.message.from) {
+        registerUser(body.message.from);
+      }
       await handleBotCommand(body.message);
     } else if (body.callback_query) {
+      // Register user from callback query too
+      if (body.callback_query.from) {
+        registerUser(body.callback_query.from);
+      }
       await handleCallbackQuery(body.callback_query);
     }
 
