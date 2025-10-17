@@ -19,22 +19,31 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useWeb3 } from '../contexts/Web3Context';
 
 export default function Profile() {
-  const { account, isConnected } = useWeb3();
   const [activeTab, setActiveTab] = useState('overview');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [telegramUser, setTelegramUser] = useState(null);
 
-  // Mock user data - use actual wallet address if connected
+  // Get Telegram user from Web App or session
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      if (tg.initDataUnsafe?.user) {
+        setTelegramUser(tg.initDataUnsafe.user);
+      }
+    }
+  }, []);
+
+  // Load user data - use ChainSync wallet generated from Telegram ID
   useEffect(() => {
     setTimeout(() => {
       setUser({
-        id: 1,
-        address: account || '0x079b15a064c1cD07252CD9FCB1de5561D8D56992',
-        username: 'crypto_enthusiast',
-        displayName: 'Crypto Enthusiast',
+        id: telegramUser?.id || 1,
+        address: '0x079b15a064c1cD07252CD9FCB1de5561D8D56992', // ChainSync wallet
+        username: telegramUser?.username || 'crypto_enthusiast',
+        displayName: telegramUser ? `${telegramUser.first_name} ${telegramUser.last_name || ''}`.trim() : 'Crypto Enthusiast',
         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
         bio: 'Passionate about universal commerce and cross-chain payments. Building the future of Web3.',
         joinedDate: '2025-01-15',
@@ -73,7 +82,7 @@ export default function Profile() {
       });
       setLoading(false);
     }, 1000);
-  }, [account]); // Reload when account changes
+  }, [telegramUser]); // Reload when Telegram user changes
 
   const handleCopyAddress = () => {
     if (user?.address) {
