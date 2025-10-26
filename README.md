@@ -1,292 +1,421 @@
-# 🚀 ChainSync - Universal Social Commerce Platform
+# 🚀 ChainSync - Social Commerce with Telegram Payments
 
 [![Next.js](https://img.shields.io/badge/Next.js-13.5.4-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-18.2.0-blue)](https://reactjs.org/)
-[![Framer Motion](https://img.shields.io/badge/Framer%20Motion-12.23.22-pink)](https://www.framer.com/motion/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.3.3-cyan)](https://tailwindcss.com/)
-[![Push Chain](https://img.shields.io/badge/Push%20Chain-Powered-purple)](https://push.org/)
+[![Push Chain](https://img.shields.io/badge/Push%20Chain-Testnet-purple)](https://push.org/)
+[![Telegram Bot](https://img.shields.io/badge/Telegram-Bot%20Active-blue)](https://t.me/PushAuthBot)
+[![Vercel](https://img.shields.io/badge/Deployed-Vercel-black)](https://chainsync-social-commerce.vercel.app)
 
-> **Winner of Project G.U.D** - The first Universal Social Commerce platform that enables shopping from any blockchain and paying with any token.
+> **Social commerce platform with instant crypto payments through Telegram**
 
-## 🌟 **What is ChainSync?**
+🌐 **Live Demo:** [chainsync-social-commerce.vercel.app](https://chainsync-social-commerce.vercel.app)  
+🤖 **Telegram Bot:** [@PushAuthBot](https://t.me/PushAuthBot)  
+⛓️ **Blockchain:** Push Chain Donut Testnet (Chain ID: 42101)
 
-ChainSync revolutionizes e-commerce by creating the first **Universal Social Commerce** platform. Users can:
+---
 
-- 🛍️ **Shop from any blockchain** - Browse products from sellers on Ethereum, Solana, Polygon, Push Chain, and more
-- 💳 **Pay with any token** - Use your preferred cryptocurrency regardless of the seller's chain
-- 🤝 **Social Commerce** - Discover products through your network, share purchases, and build reputation
-- ⚡ **Instant Payments** - Powered by our award-winning PushPay Bot for seamless transactions
-- 🔗 **Zero Bridge Fees** - Direct cross-chain payments without expensive bridging
+## 🎯 What is ChainSync?
 
-## 🏆 **Project G.U.D Winner**
+ChainSync combines **social commerce** with **blockchain payments** through a Telegram bot. Users can:
 
-ChainSync won Project G.U.D by solving the fundamental problem of blockchain fragmentation in commerce. Our universal approach allows true interoperability between all major blockchains.
+- 🛍️ **Discover products** through social connections
+- 💸 **Send crypto instantly** via Telegram commands
+- 🎁 **Get test tokens** from the faucet
+- 👥 **Share purchases** with friends
+- ⚡ **Pay on-chain** with zero friction
 
-## ✨ **Key Features**
+**Key Innovation:** Making crypto payments as easy as sending a text message.
 
-### 🌐 **Universal Marketplace**
-- **Cross-chain product listings** - List once, sell to all chains
-- **Smart price conversion** - Automatic pricing across different tokens
-- **Chain-agnostic shopping** - Buy from any seller regardless of their blockchain
+---
 
-### 🤖 **PushPay Bot Integration**
-- **Natural language payments** - "Send 5 PC to @friend"
-- **Bill splitting** - "Split 20 PC between @user1 @user2"
-- **Telegram integration** - Seamless payments through chat
-- **Real blockchain transactions** - All payments are on-chain
-
-### 📱 **Social Commerce**
-- **Social proof** - See what your network is buying
-- **Viral sharing** - Share purchases across platforms
-- **Influencer economy** - Build reputation through commerce
-- **Community discovery** - Find products through social connections
-
-### 📊 **Advanced Analytics**
-- **Cross-chain metrics** - Track performance across all blockchains
-- **Real-time insights** - Live transaction and engagement data
-- **Revenue optimization** - AI-powered pricing recommendations
-- **Social analytics** - Measure viral growth and engagement
-
-## 🛠️ **Technology Stack**
-
-### **Frontend**
-- **Next.js 13.5.4** - React framework with App Router
-- **React 18.2.0** - Modern React with hooks and concurrent features
-- **Framer Motion 12.23.22** - Smooth animations and interactions
-- **Tailwind CSS 3.3.3** - Utility-first CSS framework
-- **Lucide React** - Beautiful icon library
-
-### **Backend**
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web application framework
-- **SQLite** - Lightweight database for development
-- **Push Chain Integration** - Blockchain connectivity
-
-### **Blockchain**
-- **Push Chain** - Primary blockchain for universal state
-- **Multi-chain support** - Ethereum, Solana, Polygon, Base, Arbitrum
-- **Cross-chain payments** - Direct token transfers without bridges
-- **Smart contracts** - Automated escrow and settlement
-
-## 🚀 **Quick Start**
-
-### **Prerequisites**
-- Node.js 18+ 
-- npm or yarn
-- Git
-
-### **Installation**
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/chainsync.git
-   cd chainsync
-   ```
-
-2. **Install dependencies**
-   ```bash
-   # Install server dependencies
-   npm install
-   
-   # Install client dependencies
-   cd client
-   npm install
-   ```
-
-3. **Environment setup**
-   ```bash
-   # Copy environment files
-   cp .env.example .env
-   cp client/.env.local.example client/.env.local
-   
-   # Edit the .env files with your configuration
-   ```
-
-4. **Start development servers**
-   ```bash
-   # Terminal 1: Start backend server
-   npm run dev
-   
-   # Terminal 2: Start frontend client
-   cd client
-   npm run dev
-   ```
-
-5. **Open your browser**
-   - Frontend: http://localhost:3001
-   - Backend API: http://localhost:3000
-
-## 🤖 **PushPay Bot Setup**
-
-Our Telegram bot enables instant crypto payments with natural language commands.
-
-### **Bot Features**
-- Send payments: `Send 5 PC to @friend`
-- Split bills: `Split 20 PC between @user1 @user2`
-- Check balance: `/balance`
-- Get test tokens: `/faucet`
-- Request payments: `Request 10 PC from @friend`
-
-### **Try the Bot**
-👉 **[Open PushPay Bot](https://t.me/PushPayCryptoBot)**
-
-## 📁 **Project Structure**
+## 🏗️ Architecture
 
 ```
-chainsync/
-├── 📁 client/                 # Next.js frontend application
-│   ├── 📁 components/         # Reusable React components
-│   │   ├── Navbar.js         # Navigation with wallet connect
-│   │   ├── Footer.js         # Site footer with links
-│   │   ├── ProductCard.js    # Cross-chain product display
-│   │   ├── PushPayBotSection.js # Bot integration component
-│   │   ├── FloatingElements.js  # Animated background elements
-│   │   └── ParticleBackground.js # Interactive particle system
-│   ├── 📁 pages/             # Next.js pages and routing
-│   │   ├── index.js          # Homepage with hero section
-│   │   ├── marketplace.js    # Universal marketplace
-│   │   ├── sell.js           # Product listing interface
-│   │   ├── social.js         # Social commerce feed
-│   │   ├── analytics.js      # Business analytics dashboard
-│   │   ├── profile.js        # User profile management
-│   │   └── 404.js           # Custom error page
-│   ├── 📁 styles/            # Global styles and Tailwind config
-│   └── 📁 public/            # Static assets and images
-├── 📁 server/                # Express.js backend API
-│   ├── 📁 routes/            # API route handlers
-│   ├── 📁 middleware/        # Custom middleware
-│   └── server.js            # Main server configuration
-├── 📁 bot/                   # PushPay Telegram bot
-│   ├── enhanced-telegram-bot.js # Main bot logic
-│   ├── 📁 database/          # SQLite database setup
-│   └── 📁 utils/            # Bot utility functions
-└── 📁 docs/                  # Documentation and guides
+┌─────────────────────────────────────────────────────────────────┐
+│                         USER INTERFACE                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────┐              ┌──────────────────┐        │
+│  │  Telegram Bot    │              │   Web App        │        │
+│  │  @PushAuthBot    │◄────────────►│   (Next.js)      │        │
+│  │                  │   Deep Link  │                  │        │
+│  │  • /start        │              │  • Marketplace   │        │
+│  │  • /balance      │              │  • Social Feed   │        │
+│  │  • /send         │              │  • Analytics     │        │
+│  │  • /faucet       │              │  • Profile       │        │
+│  └────────┬─────────┘              └────────┬─────────┘        │
+│           │                                 │                  │
+└───────────┼─────────────────────────────────┼──────────────────┘
+            │                                 │
+            │         ┌───────────────────────┘
+            │         │
+            ▼         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      BACKEND (Vercel)                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              API Routes (Next.js API)                    │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │                                                          │  │
+│  │  /api/telegram/webhook     ← Telegram updates           │  │
+│  │  /api/wallet/balance/[id]  ← Get wallet balance         │  │
+│  │  /api/wallet/send          ← Send transactions          │  │
+│  │  /api/wallet/faucet        ← Request test tokens        │  │
+│  │  /api/wallet/generate      ← Generate wallet            │  │
+│  │  /api/debug/test-rpc       ← Test RPC connection        │  │
+│  │                                                          │  │
+│  └────────────────────┬─────────────────────────────────────┘  │
+│                       │                                         │
+│  ┌────────────────────▼─────────────────────────────────────┐  │
+│  │           Wallet Generation System                      │  │
+│  │  • Deterministic from Telegram ID                       │  │
+│  │  • SHA-256 hash with master seed                        │  │
+│  │  • Custodial (server-side keys)                         │  │
+│  └────────────────────┬─────────────────────────────────────┘  │
+│                       │                                         │
+└───────────────────────┼─────────────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    BLOCKCHAIN LAYER                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │         Push Chain Donut Testnet (Chain ID: 42101)      │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │                                                          │  │
+│  │  RPC: https://evm.rpc-testnet-donut-node1.push.org/     │  │
+│  │  Explorer: https://donut.push.network                   │  │
+│  │                                                          │  │
+│  │  • Native token: PC (Push Coin)                         │  │
+│  │  • EVM-compatible                                        │  │
+│  │  • Fast finality                                         │  │
+│  │  • Low gas fees                                          │  │
+│  │                                                          │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                      DATA FLOW                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  User sends /balance                                            │
+│       ↓                                                         │
+│  Telegram → Webhook → API → Generate Wallet → Query RPC        │
+│       ↓                                                         │
+│  RPC returns balance → Format response → Send to Telegram      │
+│       ↓                                                         │
+│  User sees balance in chat                                      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🎨 **Design System**
+---
 
-### **Color Palette**
-- **Primary Purple**: `#8B5CF6` - Main brand color
-- **Secondary Blue**: `#3B82F6` - Accent and links
-- **Success Green**: `#22C55E` - Positive actions
-- **Warning Orange**: `#F59E0B` - Alerts and notifications
+## ✨ Features
 
-### **Typography**
-- **Font Family**: Inter (system fallback)
-- **Headings**: Bold weights with gradient text effects
-- **Body**: Regular weight with high contrast ratios
+### 🤖 Telegram Bot Commands
 
-### **Animations**
-- **Micro-interactions**: Hover effects and button states
-- **Page transitions**: Smooth fade and slide animations
-- **Background effects**: Particle systems and floating elements
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/start` | Welcome message & setup | `/start` |
+| `/balance` | Check wallet balance | `/balance` |
+| `/faucet` | Get 10 PC test tokens | `/faucet` |
+| `/send` | Send crypto to friends | `/send 5 PC to @alice` |
+| `/request` | Request payment | `/request 10 PC from @bob` |
+| `/chainsync` | Open web app | `/chainsync` |
+| `/help` | Show all commands | `/help` |
 
-## 🔧 **Configuration**
+### 🌐 Web Application
 
-### **Environment Variables**
+- **Social Commerce Feed** - Discover products through friends
+- **Marketplace** - Browse and list products
+- **Analytics Dashboard** - Track sales and engagement
+- **User Profiles** - Manage wallet and connections
+- **Responsive Design** - Works on all devices
 
-#### **Server (.env)**
+### ⛓️ Blockchain Integration
+
+- **Real Transactions** - All payments on Push Chain
+- **Deterministic Wallets** - Generated from Telegram ID
+- **Instant Confirmation** - Fast block times
+- **Low Fees** - Minimal gas costs
+- **Explorer Integration** - Verify all transactions
+
+---
+
+## 🚀 Quick Start
+
+### Try the Bot (30 seconds)
+
+1. Open Telegram
+2. Search for `@PushAuthBot`
+3. Send `/start`
+4. Send `/faucet` to get test tokens
+5. Send `/balance` to see your wallet
+
+### Run Locally
+
+```bash
+# Clone repository
+git clone https://github.com/rohitjadhav07/PUSH.git
+cd PUSH/chainsync/client
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.local.example .env.local
+# Edit .env.local with your values
+
+# Start development server
+npm run dev
+
+# Open http://localhost:3000
+```
+
+---
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create `.env.local` in `chainsync/client/`:
+
 ```env
-NODE_ENV=development
-PORT=3000
-FRONTEND_URL=http://localhost:3001
-PUSH_CHAIN_RPC_URL=https://rpc.push.org
+# Telegram Bot
 TELEGRAM_BOT_TOKEN=your_bot_token_here
+
+# Push Chain RPC
+PUSH_CHAIN_RPC_URL=https://evm.rpc-testnet-donut-node1.push.org/
+NEXT_PUBLIC_PUSH_CHAIN_RPC_URL=https://evm.rpc-testnet-donut-node1.push.org/
+
+# Wallet System
+MASTER_WALLET_SEED=chainsync-universal-commerce-2025
+FAUCET_PRIVATE_KEY=your_faucet_private_key_here
+
+# API URL
+NEXT_PUBLIC_API_URL=https://chainsync-social-commerce.vercel.app
 ```
 
-#### **Client (.env.local)**
-```env
-NEXT_PUBLIC_TELEGRAM_BOT_URL=https://t.me/PushPayCryptoBot
-NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXT_PUBLIC_PUSH_CHAIN_RPC_URL=https://rpc.push.org
+### Vercel Deployment
+
+1. **Connect GitHub repo** to Vercel
+2. **Set environment variables** in Vercel dashboard
+3. **Deploy** - automatic on push to main
+4. **Set webhook** for Telegram bot:
+   ```bash
+   node chainsync/set-webhook.js https://your-vercel-url.vercel.app
+   ```
+
+---
+
+## 📁 Project Structure
+
+```
+PUSH/
+├── chainsync/
+│   ├── client/                    # Next.js web application
+│   │   ├── components/            # React components
+│   │   │   ├── Navbar.js         # Navigation bar
+│   │   │   ├── Footer.js         # Footer component
+│   │   │   ├── ProductCard.js    # Product display
+│   │   │   └── PushPayBotSection.js  # Bot integration
+│   │   ├── pages/                # Next.js pages
+│   │   │   ├── index.js          # Homepage
+│   │   │   ├── social.js         # Social commerce
+│   │   │   ├── marketplace.js    # Product listings
+│   │   │   ├── analytics.js      # Analytics dashboard
+│   │   │   ├── profile.js        # User profile
+│   │   │   └── api/              # API routes
+│   │   │       ├── telegram/
+│   │   │       │   └── webhook.js    # Bot webhook handler
+│   │   │       ├── wallet/
+│   │   │       │   ├── balance/[telegramId].js  # Get balance
+│   │   │       │   ├── send.js       # Send transaction
+│   │   │       │   ├── faucet.js     # Faucet endpoint
+│   │   │       │   └── generate.js   # Generate wallet
+│   │   │       └── debug/
+│   │   │           └── test-rpc.js   # RPC test
+│   │   ├── styles/               # CSS styles
+│   │   └── public/               # Static assets
+│   ├── test-bot.js               # Bot testing script
+│   ├── test-balance-api.js       # API testing script
+│   └── set-webhook.js            # Webhook setup
+├── contracts/                     # Smart contracts
+├── deployment.json               # Deployment info
+├── PROJECT_STATUS.md             # Project status
+├── SUBMISSION_CHECKLIST.md       # Submission guide
+└── README.md                     # This file
 ```
 
-## 🚀 **Deployment**
+---
 
-### **Frontend (Vercel)**
+## 🧪 Testing
+
+### Test Bot Status
 ```bash
-# Build and deploy to Vercel
-npm run build
-vercel --prod
+cd chainsync
+node test-bot.js
 ```
 
-### **Backend (Railway/Heroku)**
+### Test Balance API
 ```bash
-# Deploy to Railway
-railway login
-railway init
-railway up
+cd chainsync
+node test-balance-api.js
 ```
 
-### **Bot (VPS/Cloud)**
-```bash
-# Run bot with PM2
-pm2 start enhanced-telegram-bot.js --name "pushpay-bot"
-pm2 save
-pm2 startup
-```
+### Test RPC Connection
+Visit: `https://chainsync-social-commerce.vercel.app/api/debug/test-rpc`
 
-## 🤝 **Contributing**
+### Manual Testing
+1. Send `/start` to @PushAuthBot
+2. Send `/balance` - should show wallet
+3. Send `/faucet` - should receive tokens
+4. Send `/balance` - should show updated balance
 
-We welcome contributions to ChainSync! Here's how you can help:
+---
 
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit your changes**: `git commit -m 'Add amazing feature'`
-4. **Push to the branch**: `git push origin feature/amazing-feature`
-5. **Open a Pull Request**
+## 🔐 Security
 
-### **Development Guidelines**
-- Follow the existing code style and conventions
-- Add tests for new features
-- Update documentation as needed
-- Ensure cross-chain compatibility
+### Wallet System
+- **Deterministic Generation** - Same Telegram ID = Same wallet
+- **Server-Side Keys** - Private keys never exposed to client
+- **Custodial Model** - Simplified UX for mainstream users
+- **Secure Seed** - Master seed stored in environment variables
 
-## 📄 **License**
+### API Security
+- **Webhook Validation** - Verify Telegram requests
+- **Rate Limiting** - Prevent abuse (faucet, etc.)
+- **Input Validation** - Sanitize all user inputs
+- **Error Handling** - No sensitive data in error messages
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+---
 
-## 🙏 **Acknowledgments**
+## 📊 Tech Stack
 
-- **Push Protocol** - For the innovative Push Chain technology
-- **Project G.U.D** - For recognizing our vision of universal commerce
-- **The Web3 Community** - For supporting cross-chain innovation
-- **Our Users** - For believing in a unified commerce future
+### Frontend
+- **Next.js 13.5.4** - React framework
+- **React 18.2.0** - UI library
+- **Tailwind CSS 3.3.3** - Styling
+- **Framer Motion** - Animations
+- **Lucide React** - Icons
 
-## 📞 **Support & Contact**
+### Backend
+- **Next.js API Routes** - Serverless functions
+- **Vercel** - Hosting & deployment
+- **Node.js** - Runtime environment
 
-- **Website**: [chainsync.app](https://chainsync.app)
-- **Telegram Bot**: [@PushPayCryptoBot](https://t.me/PushPayCryptoBot)
-- **Twitter**: [@ChainSyncApp](https://twitter.com/ChainSyncApp)
-- **Discord**: [Join our community](https://discord.gg/chainsync)
-- **Email**: support@chainsync.app
+### Blockchain
+- **Push Chain** - EVM-compatible blockchain
+- **ethers.js 6.8.0** - Ethereum library
+- **Chain ID: 42101** - Donut Testnet
 
-## 🔮 **Roadmap**
+### Bot
+- **Telegram Bot API** - Bot framework
+- **Webhook** - Real-time updates
+- **Natural Language** - Command parsing
 
-### **Q1 2025**
-- [ ] Mobile app launch (iOS/Android)
-- [ ] Advanced analytics dashboard
-- [ ] Multi-language support
-- [ ] Enhanced social features
+---
 
-### **Q2 2025**
-- [ ] AI-powered product recommendations
-- [ ] Advanced seller tools
-- [ ] Marketplace governance token
-- [ ] Cross-chain NFT support
+## 🎯 Use Cases
 
-### **Q3 2025**
-- [ ] Enterprise solutions
-- [ ] API marketplace
-- [ ] Advanced payment options
-- [ ] Global expansion
+### For Users
+- **Easy Payments** - Send crypto like texting
+- **No App Download** - Works in Telegram
+- **Social Discovery** - Find products through friends
+- **Instant Transactions** - Fast blockchain confirmations
+
+### For Merchants
+- **Global Reach** - Sell to anyone with Telegram
+- **Low Fees** - Minimal transaction costs
+- **Social Marketing** - Viral product sharing
+- **Analytics** - Track sales and engagement
+
+### For Developers
+- **Open API** - Build on ChainSync
+- **Webhook Integration** - Real-time events
+- **Smart Contracts** - Extend functionality
+- **Documentation** - Comprehensive guides
+
+---
+
+## 🚧 Known Limitations
+
+- **Testnet Only** - Currently on Push Chain Donut Testnet
+- **Custodial Wallets** - Server holds private keys
+- **In-Memory Database** - User data not persisted (demo)
+- **Limited Tokens** - Only PC token supported
+- **Mock Data** - Some features use placeholder data
+
+---
+
+## 🗺️ Roadmap
+
+### Phase 1 (Current)
+- ✅ Telegram bot with basic commands
+- ✅ Web application
+- ✅ Push Chain integration
+- ✅ Wallet generation
+- ✅ Faucet system
+
+### Phase 2 (Next)
+- [ ] Non-custodial wallet option
+- [ ] Multi-token support
+- [ ] Real product listings
+- [ ] User authentication
+- [ ] Persistent database
+
+### Phase 3 (Future)
+- [ ] Mainnet deployment
+- [ ] Mobile app
+- [ ] Advanced analytics
+- [ ] Merchant tools
+- [ ] Payment splitting
+
+---
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file
+
+---
+
+## 📞 Support
+
+- **Live Demo:** [chainsync-social-commerce.vercel.app](https://chainsync-social-commerce.vercel.app)
+- **Telegram Bot:** [@PushAuthBot](https://t.me/PushAuthBot)
+- **GitHub:** [rohitjadhav07/PUSH](https://github.com/rohitjadhav07/PUSH)
+- **Explorer:** [donut.push.network](https://donut.push.network)
+
+---
+
+## 🙏 Acknowledgments
+
+- **Push Protocol** - For Push Chain infrastructure
+- **Telegram** - For bot platform
+- **Vercel** - For hosting
+- **Next.js** - For framework
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for the future of Universal Commerce**
+**Built with ❤️ for the future of social commerce**
 
-[🌟 Star us on GitHub](https://github.com/your-username/chainsync) • [🐛 Report Bug](https://github.com/your-username/chainsync/issues) • [💡 Request Feature](https://github.com/your-username/chainsync/issues)
+[⭐ Star on GitHub](https://github.com/rohitjadhav07/PUSH) • [🐛 Report Bug](https://github.com/rohitjadhav07/PUSH/issues) • [🚀 Try Demo](https://chainsync-social-commerce.vercel.app)
 
 </div>
